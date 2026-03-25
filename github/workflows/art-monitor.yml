@@ -1,0 +1,31 @@
+name: Africa Artist Monitor
+on:
+  schedule:
+    # Daily at 6AM UTC = 9AM EAT (UTC+3)
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # Manual trigger button
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Install dependencies
+      run: pip install feedparser
+    
+    - name: Run monitor
+      env:
+        EMAIL_FROM: africaartnews160@gmail.com
+        EMAIL_TO: info@africaartnews.com
+        PASSWORD: hehcjvwydyetxtmx
+      run: python art_monitor.py
+    
+    - name: Check for alerts
+      if: always()
+      run: echo "✅ Monitor complete - check email!"
